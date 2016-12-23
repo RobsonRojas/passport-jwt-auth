@@ -2,7 +2,7 @@ var express = require('express');
 var passport = require('passport');
 var Strategy = require('passport-http').BasicStrategy;
 var db = require('./db');
-
+var jwt = require('jsonwebtoken');
 
 // Configure the Basic strategy for use by Passport.
 //
@@ -33,7 +33,11 @@ app.configure(function() {
 app.get('/',
   passport.authenticate('basic', { session: false }),
   function(req, res) {
-    res.json({ username: req.user.username, email: req.user.emails[0].value });
+    var tokn = jwt.sign({
+      id: req.user.username
+    }, '123');
+
+    res.json({ username: req.user.username, email: req.user.emails[0].value, token: tokn });
   });
 
 app.listen(3000);
